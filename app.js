@@ -7,7 +7,8 @@ const translations = new Map([
     leadResponseRate: "Lead Response Rate", prospectResponseRate: "Prospect Response Rate",
     prospects: "Prospects", leads: "Leads", customers: "Customers",
     invalidNumbers: "Enter positive values for revenue, order value, and both response rates.",
-    invalidDates: "The campaign end date must be on or after the start date.", month: "Month", chartLabel: "Monthly lead funnel forecast"
+    invalidDates: "The campaign end date must be on or after the start date.", month: "Month", chartLabel: "Monthly lead funnel forecast",
+    usd: "US Dollar", eur: "Euro", bgn: "Bulgarian Lev"
   }],
   ["bg", {
     language: "Език", currency: "Валута", campaignStart: "Начало на кампанията", campaignEnd: "Край на кампанията",
@@ -15,14 +16,15 @@ const translations = new Map([
     leadResponseRate: "Процент отговорили лидове", prospectResponseRate: "Процент отговорили потенциални клиенти",
     prospects: "Потенциални клиенти", leads: "Лидове", customers: "Клиенти",
     invalidNumbers: "Въведете положителни стойности за приход, поръчка и процентите.",
-    invalidDates: "Краят на кампанията трябва да е след или на началната дата.", month: "Месец", chartLabel: "Месечна прогноза за фунията"
+    invalidDates: "Краят на кампанията трябва да е след или на началната дата.", month: "Месец", chartLabel: "Месечна прогноза за фунията",
+    usd: "Щатски долар", eur: "Евро", bgn: "Български лев"
   }]
 ]);
 
 const currencyDetails = new Map([
-  ["USD", { symbol: "$", locale: "en-US" }],
-  ["EUR", { symbol: "€", locale: "de-DE" }],
-  ["BGN", { symbol: "лв", locale: "bg-BG" }]
+  ["USD", { symbol: "$", locale: "en-US", usdRate: 1 }],
+  ["EUR", { symbol: "€", locale: "de-DE", usdRate: 1.08 }],
+  ["BGN", { symbol: "лв", locale: "bg-BG", usdRate: 0.553 }]
 ]);
 
 class LeadPredictor {
@@ -52,7 +54,13 @@ class LeadPredictor {
     updateInputs.forEach((input) => input.addEventListener("input", () => this.update()));
     this.form.addEventListener("submit", (event) => event.preventDefault());
     this.elements.language.addEventListener("change", () => { this.state.language = this.elements.language.value; this.localize(); this.update(); });
-    this.elements.currency.addEventListener("change", () => { this.state.currency = this.elements.currency.value; this.updateCurrencySymbols(); this.update(); });
+    this.elements.currency.addEventListener("change", () => {
+      const previousCurrency = this.state.currency;
+      this.state.currency = this.elements.currency.value;
+      this.convertInputCurrency(previousCurrency, this.state.currency);
+      this.updateCurrencySymbols();
+      this.update();
+    });
   }
 
   values() {
@@ -184,11 +192,23 @@ class LeadPredictor {
     const dictionary = translations.get(this.state.language);
     document.documentElement.lang = this.state.language;
     document.querySelectorAll("[data-i18n]").forEach((element) => { element.textContent = dictionary[element.dataset.i18n]; });
+    this.elements.currency.options[0].text = `$ ${dictionary.usd}`;
+    this.elements.currency.options[1].text = `€ ${dictionary.eur}`;
+    this.elements.currency.options[2].text = `лв ${dictionary.bgn}`;
   }
 
   updateCurrencySymbols() {
     const symbol = currencyDetails.get(this.state.currency).symbol;
     document.querySelectorAll(".currency-symbol").forEach((node) => { node.textContent = symbol; });
+  }
+
+  convertInputCurrency(fromCode, toCode) {
+    const fromRate = currencyDetails.get(fromCode).usdRate;
+    const toRate = currencyDetails.get(toCode).usdRate;
+    [this.elements.revenue, this.elements.averageOrder].forEach((input) => {
+      const amount = Number(input.value);
+      if (Number.isFinite(amount) && amount > 0) input.value = ((amount * fromRate) / toRate).toFixed(2);
+    });
   }
 
   formatDateRange(start, end) {
