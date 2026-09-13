@@ -9,6 +9,7 @@
   --track: #536378;
   --fill: #eef2f7;
   --focus: #9ec5ff;
+  --neon-accent: #56f5d1;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background: var(--page);
@@ -20,6 +21,7 @@ button, input, select { font: inherit; }
 .app-shell { max-width: 1440px; min-height: 100vh; margin: auto; padding: 28px 10px 16px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; }
 .sidebar { display: flex; flex-direction: column; gap: 18px; }
 .brand { display: inline-flex; align-items: center; gap: 7px; color: #91a2bb; text-decoration: none; font-size: clamp(1.55rem, 2.5vw, 2.15rem); font-weight: 700; letter-spacing: -1.4px; }
+.brand { text-shadow: 0 0 9px rgba(86, 245, 209, .62); }
 .brand > span:last-child > span { color: #c0cad9; font-weight: 400; }
 .brand-mark { width: 32px; height: 32px; display: grid; place-items: center; color: #3d506a; background: #c1ccda; border-radius: 6px; font-size: 2rem; line-height: .5; transform: rotate(180deg); }
 .settings-card, .overview-panel, .rates-panel { border: 1px solid rgba(103, 128, 159, .19); border-radius: 15px; background: linear-gradient(145deg, rgba(31, 46, 68, .96), rgba(21, 33, 51, .96)); box-shadow: 0 10px 30px rgba(5, 12, 25, .16); }
@@ -55,7 +57,7 @@ select:focus-visible, input:focus-visible { border-color: var(--focus); box-shad
 .result-value { display: block; margin: 8px 0 5px; color: white; font-size: 1.9rem; font-weight: 700; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,.16); }
 .progress-track { height: 10px; overflow: hidden; border-radius: 999px; background: #56667b; }.progress-track span { display: block; height: 100%; width: 0; min-width: 10px; border-radius: inherit; background: white; transition: width .2s ease; }
 .rates-panel { padding: 23px 27px 28px; display: grid; gap: 22px; }.range-control { display: grid; gap: 10px; }.range-label { display: flex; justify-content: space-between; gap: 12px; }.range-label output { color: #c5ced9; font-weight: 500; }
-input[type="range"] { --range-pct: 40%; width: 100%; height: 14px; margin: 0; appearance: none; cursor: pointer; background: linear-gradient(to right, #c5cfdd 0 var(--range-pct), #516176 var(--range-pct) 100%); border-radius: 999px; }
+input[type="range"] { --range-pct: 40%; width: 100%; height: 14px; margin: 0; appearance: none; cursor: pointer; background: linear-gradient(to right, var(--neon-accent) 0 var(--range-pct), #516176 var(--range-pct) 100%); border-radius: 999px; }
 input[type="range"]::-webkit-slider-thumb { appearance: none; width: 21px; height: 21px; background: #fff; border: 3px solid #b6c1d0; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.4); }
 input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; background: #fff; border: 3px solid #b6c1d0; border-radius: 50%; }
 input[type="range"]:focus-visible { outline: 3px solid rgba(158, 197, 255, .55); outline-offset: 3px; }
