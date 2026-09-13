@@ -125,8 +125,13 @@ class LeadPredictor {
     const months = Math.max(1, Math.ceil(days / 30.44));
     return Array.from({ length: months }, (_, index) => {
       const fraction = (index + 1) / months;
+      const segmentStart = new Date(start);
+      const segmentEnd = new Date(start);
+      segmentStart.setDate(start.getDate() + Math.round((index * days) / months));
+      segmentEnd.setDate(start.getDate() + Math.round(((index + 1) * days) / months));
       return {
         number: index + 1,
+        period: this.formatDateRange(segmentStart, segmentEnd),
         customers: Math.ceil(result.customers * fraction),
         leads: Math.ceil(result.leads * fraction),
         prospects: Math.ceil(result.prospects * fraction)
@@ -159,12 +164,12 @@ class LeadPredictor {
 
   tooltipText(month) {
     const labels = translations.get(this.state.language);
-    return `${labels.month} ${month.number}. ${labels.prospects}: ${this.formatNumber(month.prospects)}. ${labels.leads}: ${this.formatNumber(month.leads)}. ${labels.customers}: ${this.formatNumber(month.customers)}.`;
+    return `${labels.month} ${month.number}, ${month.period}. ${labels.prospects}: ${this.formatNumber(month.prospects)}. ${labels.leads}: ${this.formatNumber(month.leads)}. ${labels.customers}: ${this.formatNumber(month.customers)}.`;
   }
 
   showTooltip(event, month) {
     const labels = translations.get(this.state.language);
-    this.elements.tooltip.innerHTML = `<strong>${labels.month} ${month.number}</strong>${labels.prospects}: ${this.formatNumber(month.prospects)}<br>${labels.leads}: ${this.formatNumber(month.leads)}<br>${labels.customers}: ${this.formatNumber(month.customers)}`;
+    this.elements.tooltip.innerHTML = `<strong>${labels.month} ${month.number}</strong><span>${month.period}</span><br>${labels.prospects}: ${this.formatNumber(month.prospects)}<br>${labels.leads}: ${this.formatNumber(month.leads)}<br>${labels.customers}: ${this.formatNumber(month.customers)}`;
     this.elements.tooltip.hidden = false;
     const host = this.elements.chart.parentElement.getBoundingClientRect();
     const item = event.currentTarget.getBoundingClientRect();
@@ -184,6 +189,12 @@ class LeadPredictor {
   updateCurrencySymbols() {
     const symbol = currencyDetails.get(this.state.currency).symbol;
     document.querySelectorAll(".currency-symbol").forEach((node) => { node.textContent = symbol; });
+  }
+
+  formatDateRange(start, end) {
+    const locale = currencyDetails.get(this.state.currency).locale;
+    const format = new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" });
+    return `${format.format(start)} – ${format.format(end)}`;
   }
 
   formatNumber(value) { return new Intl.NumberFormat(currencyDetails.get(this.state.currency).locale, { maximumFractionDigits: 0 }).format(value); }
