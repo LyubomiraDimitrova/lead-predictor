@@ -39,4 +39,4 @@ This is a static application. Open `index.html` directly in a modern browser, or
 
 Deploy the repository root as the publish directory; no build command is required.
 
-Netlify URL: _Pending Netlify authentication and production deployment._
+Netlify URL: [https://lyubomira-lead-predictor.netlify.app](https://lyubomira-lead-predictor.netlify.app)
