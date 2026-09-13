@@ -162,9 +162,13 @@ class LeadPredictor {
       const show = (event) => this.showTooltip(event, month);
       item.addEventListener("mouseenter", show);
       item.addEventListener("focus", show);
+      item.addEventListener("click", show);
       item.addEventListener("mouseleave", () => this.hideTooltip());
       item.addEventListener("blur", () => this.hideTooltip());
-      item.addEventListener("keydown", (event) => { if (event.key === "Escape") this.hideTooltip(); });
+      item.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") { event.preventDefault(); show(event); }
+        if (event.key === "Escape") this.hideTooltip();
+      });
       return item;
     }));
     this.elements.period.textContent = `${months.length} ${months.length === 1 ? labels.month.toLowerCase() : `${labels.month.toLowerCase()}s`}`;
